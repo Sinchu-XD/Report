@@ -14,11 +14,33 @@ BOT_TOKEN = "YOUR_BOT_TOKEN"
 OWNER_ID = 123456789
 SUDO_USERS = [OWNER_ID]
 
-AUTHORIZED_USERS = {}
 LOGIN_STORAGE_FILE = 'login_storage.json'
 
 
 client = TelegramClient('bot', API_ID, API_HASH).start(bot_token=BOT_TOKEN)
+
+if os.path.exists(LOGIN_STORAGE_FILE):
+    with open(LOGIN_STORAGE_FILE, 'r') as f:
+        AUTHORIZED_USERS = json.load(f)
+else:
+    AUTHORIZED_USERS = {}
+
+user_clients = {}
+
+
+async def restore_sessions():
+    for user_id, data in AUTHORIZED_USERS.items():
+        session_str = data.get("session")
+        if session_str:
+            try:
+                temp_client = TelegramClient(StringSession(session_str), API_ID, API_HASH)
+                await temp_client.connect()
+                if await temp_client.is_user_authorized():
+                    user_clients[int(user_id)] = temp_client
+                    print(f"[+] Restored session for user {user_id}")
+            except Exception as e:
+                print(f"[!] Restore failed for {user_id}: {e}")
+
 
 report_logs = {
     'channel_reports': 0,
@@ -76,51 +98,74 @@ async def authenticate_user(event):
         await event.respond("You are not logged in. Please use the /login command to authenticate.")
         return False
 
-async def login(event, phone_number):
-    user_id = event.sender_id
-    
-    if user_id in AUTHORIZED_USERS:
-        await event.respond("You are already logged in.")
-        return
-    
-    await event.respond("Please wait while we authenticate your phone number...")
-    
-    try:
-        # Log in with the provided phone number
-        await client.send_code_request(phone_number)  # Send code to user's phone number
-        await event.respond("Please enter the code you received:")
+@client.on(events.NewMessage(pattern='/login'))
+async def login(event):
+    sender = await event.get_sender()
+    user_id = sender.id
 
-        @client.on(events.NewMessage(pattern='^\d{5,6}$'))  # Accept code from user
-        async def handle_code(event):
-            code = event.text.strip()
-            try:
-                await client.sign_in(phone_number, code)  # Complete the login
-                # If 2FA is enabled, it will trigger SessionPasswordNeededError
-                try:
-                    await client.start()  # Start the client
-                except SessionPasswordNeededError:
-                    await event.respond("Please enter your 2FA password:")
-                    # Ask the user to provide their 2FA password
-                    @client.on(events.NewMessage(pattern='^\S+$'))  # Accept 2FA password
-                    async def handle_2fa_password(event):
-                        password = event.text.strip()
-                        try:
-                            await client.sign_in(password=password)  # Provide 2FA password
-                            AUTHORIZED_USERS[user_id] = {
-                                'phone_number': phone_number,
-                                '2fa_password': password
-                            }
-                            # Save login data to the file
-                            with open(LOGIN_STORAGE_FILE, 'w') as f:
-                                json.dump(AUTHORIZED_USERS, f)
-                            await event.respond(f"User {user_id} has been successfully logged in.")
-                        except Exception as e:
-                            await event.respond(f"Login failed. Error: {str(e)}")
-            except Exception as e:
-                await event.respond(f"Login failed. Please try again. Error: {str(e)}")
-    
+    if str(user_id) in AUTHORIZED_USERS:
+        await event.respond("✅ You are already logged in.")
+        return
+
+    await event.respond("📱 Send your phone number (with country code):")
+    try:
+        response = await client.wait_for(events.NewMessage(from_users=user_id), timeout=60)
+        phone_number = response.text.strip()
+
+        temp_client = TelegramClient(StringSession(), API_ID, API_HASH)
+        await temp_client.connect()
+        await temp_client.send_code_request(phone_number)
+
+        await event.respond("📩 Send the OTP you received:")
+        otp_msg = await client.wait_for(events.NewMessage(from_users=user_id), timeout=60)
+        otp = otp_msg.text.strip()
+
+        try:
+            await temp_client.sign_in(phone_number, otp)
+        except SessionPasswordNeededError:
+            await event.respond("🔐 2FA enabled. Send your Telegram password:")
+            pwd_msg = await client.wait_for(events.NewMessage(from_users=user_id), timeout=60)
+            password = pwd_msg.text.strip()
+            await temp_client.sign_in(password=password)
+
+        session_str = temp_client.session.save()
+        AUTHORIZED_USERS[str(user_id)] = {
+            "phone": phone_number,
+            "session": session_str
+        }
+        with open(LOGIN_STORAGE_FILE, "w") as f:
+            json.dump(AUTHORIZED_USERS, f)
+
+        user_clients[user_id] = temp_client
+        await event.respond("✅ Logged in successfully.")
+
     except Exception as e:
-        await event.respond(f"Failed to send verification code. Error: {str(e)}")
+        await event.respond(f"❌ Login failed: {e}")
+        try:
+            await temp_client.disconnect()
+        except:
+            pass
+
+
+@client.on(events.NewMessage(pattern='/logout'))
+async def logout(event):
+    sender = await event.get_sender()
+    user_id = sender.id
+
+    if str(user_id) in AUTHORIZED_USERS:
+        user_client = user_clients.get(user_id)
+        if user_client:
+            await user_client.disconnect()
+            user_clients.pop(user_id, None)
+
+        AUTHORIZED_USERS.pop(str(user_id))
+        with open(LOGIN_STORAGE_FILE, "w") as f:
+            json.dump(AUTHORIZED_USERS, f)
+
+        await event.respond("✅ Logged out successfully.")
+    else:
+        await event.respond("❌ You are not logged in.")
+
 
 
 async def mass_report(target, reason_key="other"):
