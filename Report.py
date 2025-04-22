@@ -71,19 +71,20 @@ REASONS_MESSAGES = {
 
 HELP_MESSAGE = """
 Available Report Reasons:
-1. /spamming - Spamming constantly
-2. /pornography - Posting adult content
-3. /child_abuse - Child abuse or exploitation
-4. /violence - Threatening or violent content
-5. /fake - Pretending to be someone else
-6. /copyright - Posting copyrighted material
-7. /drugs - Promoting drugs
-8. /geo_irrelevant - Content not relevant to the target's country
-9. /personal_details - Sharing personal/private data
-10. /other - Miscellaneous rule violation
+1. **spamming** - Spamming Constantly
+2. **pornography** - Posting Adult Content
+3. **child_abuse** - Child Abuse OR Exploitation
+4. **violence** - Threatening Or Violent Content
+5. **fake** - Pretending To Be Someone Else
+6. **copyright** - Posting Copyrighted Material
+7. **drugs** - Promoting Drugs
+8. **geo_irrelevant** - Content Not Relevant To The Target's Country
+9. **personal_details** - Sharing Personal/Private Data
+10. **other** - Miscellaneous Rule Violation
 
 Usage Example:
-To report a user/channel: /report_all @username spamming
+**To Report A User/Channel**: /report @username spamming
+**To Report Mass User/Channel**: /mass_report @username
 """
 
 def is_sudo_user(user_id):
