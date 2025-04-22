@@ -287,7 +287,11 @@ async def report_logs_command(event):
     else:
         await event.respond("You are not authorized to view the report logs.")
 
+@client.on(events.NewMessage(pattern='/help'))
+async def help_command(event):
+    await event.respond(HELP_MESSAGE)
+
+
 if __name__ == '__main__':
     asyncio.run(restore_sessions())
     client.run_until_disconnected()
-    
