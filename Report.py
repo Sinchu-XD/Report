@@ -2,6 +2,8 @@ from telethon import TelegramClient, events
 from telethon.tl.functions.messages import Report
 from telethon.tl.types import PeerChannel, PeerUser, InputReportReasonSpam, InputReportReasonPornography, InputReportReasonChildAbuse, InputReportReasonViolence, InputReportReasonFake, InputReportReasonCopyright, InputReportReasonDrugs, InputReportReasonOther
 from telethon.errors import FloodWaitError
+from telethon.sessions import StringSession
+from telethon.errors import SessionPasswordNeededError
 import logging
 import time
 
