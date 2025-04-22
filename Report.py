@@ -2,8 +2,20 @@ import os
 import json
 import asyncio
 from telethon import TelegramClient, events
-#from telethon.tl.functions.messages import ReportPeer
-from telethon.tl.types import PeerChannel, PeerUser, InputReportReasonSpam, InputReportReasonPornography, InputReportReasonChildAbuse, InputReportReasonViolence, InputReportReasonFake, InputReportReasonCopyright, InputReportReasonDrugs, InputReportReasonOther
+from telethon.tl.functions.messages import ReportRequest
+from telethon.tl.types import (PeerChannel,
+    PeerUser, 
+    InputReportReasonSpam,
+    InputReportReasonViolence,
+    InputReportReasonPornography,
+    InputReportReasonChildAbuse,
+    InputReportReasonCopyright,
+    InputReportReasonFake,
+    InputReportReasonIllegalDrugs,
+    InputReportReasonPersonalDetails,
+    InputReportReasonGeoIrrelevant,
+    InputReportReasonOther
+)
 from telethon.errors import FloodWaitError
 from telethon.sessions import StringSession
 from telethon.errors import SessionPasswordNeededError
