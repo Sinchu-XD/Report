@@ -264,6 +264,11 @@ async def report_all(event):
     else:
         await event.respond("You are not authorized to use this command.")
 
+@client.on(events.NewMessage(pattern='/test'))
+async def test_command(event):
+    user_id = event.sender_id
+    await event.respond(f"Test command received! Your user ID is {user_id}.")
+
 @client.on(events.NewMessage(pattern='/mass_report_all_reasons'))
 async def mass_report_all_reasons_command(event):
     user_id = event.sender_id
