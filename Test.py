@@ -1,3 +1,4 @@
+import asyncio
 from telethon import TelegramClient, events
 from Report import API_ID as api_id, API_HASH as api_hash, BOT_TOKEN
 
