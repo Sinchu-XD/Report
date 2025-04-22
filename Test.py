@@ -1,17 +1,16 @@
 from telethon.sync import TelegramClient
-from telethon.types import InputReportReasonSpam
-from telethon.tl.functions.messages import ReportRequest
+from telethon.tl.functions.account import ReportPeer
+from telethon.tl.types import InputReportReasonSpam
 
-api_id = 123456  # replace with your API ID
-api_hash = 'your_api_hash'  # replace with your API hash
-name = 'session_name'
+api_id = 123456  # Replace with your API ID
+api_hash = 'your_api_hash'  # Replace with your API Hash
+session_name = 'session'
 
-with TelegramClient(name, api_id, api_hash) as client:
-    user = client.get_input_entity("username")  # Replace 'username' with the target username
-    result = client(functions.messages.Report(
+with TelegramClient(session_name, api_id, api_hash) as client:
+    user = client.get_input_entity("username")  # Replace with target username
+    result = client(ReportPeer(
         peer=user,
-        reason=types.InputReportReasonSpam(),
-        message='This user is spamming.'
+        reason=InputReportReasonSpam(),
+        message="User is sending spam content."
     ))
     print(result)
-  
