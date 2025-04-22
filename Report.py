@@ -9,14 +9,16 @@ logging.basicConfig(level=logging.INFO)
 
 API_ID = 'your_api_id'
 API_HASH = 'your_api_hash'
+BOT_TOKEN = "YOUR_BOT_TOKEN"
 
 OWNER_ID = 123456789
-SUDO_USERS = [987654321]
+SUDO_USERS = [OWNER_ID]
+
 AUTHORIZED_USERS = {}
 LOGIN_STORAGE_FILE = 'login_storage.json'
 
 
-client = TelegramClient('report_bot', API_ID, API_HASH)
+client = TelegramClient('bot', API_ID, API_HASH).start(bot_token=BOT_TOKEN)
 
 report_logs = {
     'channel_reports': 0,
