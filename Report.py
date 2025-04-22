@@ -232,9 +232,8 @@ async def add_sudo(event):
         try:
             target_id = int(event.message.text.split(' ')[1])
             await add_sudo_user(target_id)
-        except:
-            if len(event.message.text.split()) < 2:
-                await event.respond("Please provide a valid user ID.")
+        except Exception as e:
+            await event.respond(f"Error: {e}")
     else:
         await event.respond("You are not authorized to add sudo users.")
 
@@ -245,8 +244,8 @@ async def remove_sudo(event):
         try:
             target_id = int(event.message.text.split(' ')[1])
             await remove_sudo_user(target_id)
-        except:
-            await event.respond("Please provide a valid user ID.")
+        except Exception as e:
+            await event.respond(f"Error: {e}")
     else:
         await event.respond("You are not authorized to remove sudo users.")
 
@@ -260,8 +259,8 @@ async def report_all(event):
             target = await client.get_entity(target)
             await mass_report(target, reason_key)
             await event.respond(f"Mass report for {target.id} with reason '{reason_key}' has been initiated.")
-        except:
-            await event.respond("Please provide a valid target.")
+        except Exception as e:
+            await event.respond(f"Error: {e}")
     else:
         await event.respond("You are not authorized to use this command.")
 
@@ -274,8 +273,8 @@ async def mass_report_all_reasons_command(event):
             target = await client.get_entity(target)
             await mass_report_all_reasons(target)
             await event.respond(f"Mass reporting for {target.id} initiated.")
-        except:
-            await event.respond("Please provide a valid target.")
+        except Exception as e:
+            await event.respond(f"Error: {e}")
     else:
         await event.respond("You are not authorized to use this command.")
 
@@ -291,7 +290,8 @@ async def report_logs_command(event):
 async def help_command(event):
     await event.respond(HELP_MESSAGE)
 
+# Initialize sessions on bot startup
+loop = asyncio.get_event_loop()
+loop.run_until_complete(restore_sessions())
 
-if __name__ == '__main__':
-    asyncio.run(restore_sessions())
-    client.run_until_disconnected()
+client.run_until_disconnected()
