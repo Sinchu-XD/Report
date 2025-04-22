@@ -1,3 +1,4 @@
+"""
 import asyncio
 from telethon import TelegramClient, events
 from Report import API_ID as api_id, API_HASH as api_hash, BOT_TOKEN
@@ -17,3 +18,4 @@ if __name__ == "__main__":
         asyncio.get_event_loop().run_until_complete(main())
     except KeyboardInterrupt:
         print("🛑 Bot stopped manually.")
+"""
