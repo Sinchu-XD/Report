@@ -1,6 +1,6 @@
 from telethon.sync import TelegramClient
 from telethon import types
-from telethon.tl.functions.messages import Report
+from telethon.tl.functions.messages import ReportPeerRequest
 
 api_id = 123456  # replace with your API ID
 api_hash = 'your_api_hash'  # replace with your API hash
