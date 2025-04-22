@@ -277,7 +277,11 @@ async def mass_report_all_reasons_command(event):
 async def help_command(event):
     await event.respond(HELP_MESSAGE)
 
-
+@client.on(events.NewMessage(pattern='/get_logs'))
+async def get_logs_command(event):
+    user_id = event.sender_id
+    await get_report_logs(user_id)
+    
 async def main():
     await restore_sessions()
     await client.run_until_disconnected()
