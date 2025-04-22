@@ -1,5 +1,6 @@
 import os
 import json
+import asyncio
 from telethon import TelegramClient, events
 from telethon.tl.functions.messages import Report
 from telethon.tl.types import PeerChannel, PeerUser, InputReportReasonSpam, InputReportReasonPornography, InputReportReasonChildAbuse, InputReportReasonViolence, InputReportReasonFake, InputReportReasonCopyright, InputReportReasonDrugs, InputReportReasonOther
@@ -185,7 +186,7 @@ async def mass_report(target, reason_key="other"):
     except FloodWaitError as e:
         logging.error(f"FloodWaitError: You have been rate-limited. Waiting for {e.seconds} seconds.")
         await client.send_message(target, f"Flood wait triggered. Retrying after {e.seconds} seconds.")
-        time.sleep(e.seconds)
+        await asyncio.sleep(e.seconds)
         await mass_report(target, reason_key)
     except Exception as e:
         logging.error(f"Error reporting {target}: {str(e)}")
@@ -199,7 +200,7 @@ async def mass_report_all_reasons(target):
     except FloodWaitError as e:
         logging.error(f"FloodWaitError: You have been rate-limited. Waiting for {e.seconds} seconds.")
         await client.send_message(target, f"Flood wait triggered. Retrying after {e.seconds} seconds.")
-        time.sleep(e.seconds)
+        await asyncio.sleep(e.seconds)
         await mass_report_all_reasons(target)
     except Exception as e:
         logging.error(f"Error mass reporting {target}: {str(e)}")
@@ -227,6 +228,8 @@ async def add_sudo(event):
             target_id = int(event.message.text.split(' ')[1])
             await add_sudo_user(target_id)
         except:
+            if len(event.message.text.split()) < 2:
+    
             await event.respond("Please provide a valid user ID.")
     else:
         await event.respond("You are not authorized to add sudo users.")
@@ -288,5 +291,9 @@ async def help(event):
     else:
         await event.respond("You do not have permission to view help.")
 
-client.start()
-client.run_until_disconnected()
+async def main():
+    await restore_sessions()
+
+with client:
+    client.loop.run_until_complete(main())
+    client.run_until_disconnected()
