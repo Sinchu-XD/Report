@@ -267,6 +267,7 @@ async def report_all(event):
 @client.on(events.NewMessage(pattern='/test'))
 async def test_command(event):
     user_id = event.sender_id
+    logging.info(f"Test command received from user {user_id}")
     await event.respond(f"Test command received! Your user ID is {user_id}.")
 
 @client.on(events.NewMessage(pattern='/mass_report_all_reasons'))
@@ -297,6 +298,7 @@ async def help_command(event):
 
 async def main():
     await restore_sessions()
+    logging.info("Bot has started and is running...")
     await client.run_until_disconnected()
     await asyncio.get_event_loop().create_future()
 
