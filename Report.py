@@ -3,18 +3,13 @@ import json
 import asyncio
 from telethon import TelegramClient, events
 from telethon.tl.functions.messages import ReportRequest
-from telethon.tl.types import (PeerChannel,
-    PeerUser, 
-    InputReportReasonSpam,
-    InputReportReasonViolence,
-    InputReportReasonPornography,
-    InputReportReasonChildAbuse,
-    InputReportReasonCopyright,
-    InputReportReasonFake,
-    InputReportReasonIllegalDrugs,
-    InputReportReasonPersonalDetails,
-    InputReportReasonGeoIrrelevant,
-    InputReportReasonOther
+from telethon.tl.types import (
+    PeerChannel, PeerUser, 
+    InputReportReasonSpam, InputReportReasonViolence,
+    InputReportReasonPornography, InputReportReasonChildAbuse,
+    InputReportReasonCopyright, InputReportReasonFake,
+    InputReportReasonIllegalDrugs, InputReportReasonPersonalDetails,
+    InputReportReasonGeoIrrelevant, InputReportReasonOther
 )
 from telethon.errors import FloodWaitError
 from telethon.sessions import StringSession
@@ -33,7 +28,6 @@ SUDO_USERS = [OWNER_ID]
 
 LOGIN_STORAGE_FILE = 'login_storage.json'
 
-
 client = TelegramClient('bot', API_ID, API_HASH).start(bot_token=BOT_TOKEN)
 
 if os.path.exists(LOGIN_STORAGE_FILE):
@@ -43,7 +37,6 @@ else:
     AUTHORIZED_USERS = {}
 
 user_clients = {}
-
 
 async def restore_sessions():
     for user_id, data in AUTHORIZED_USERS.items():
@@ -57,7 +50,6 @@ async def restore_sessions():
                     print(f"[+] Restored session for user {user_id}")
             except Exception as e:
                 print(f"[!] Restore failed for {user_id}: {e}")
-
 
 report_logs = {
     'channel_reports': 0,
@@ -86,8 +78,8 @@ Available Report Reasons:
 5. /fake - Pretending to be someone else
 6. /copyright - Posting copyrighted material
 7. /drugs - Promoting drugs
-8. /geo_irrelevant - Irrelevant to the target country
-9. /personal_details - Sharing private or personal data
+8. /geo_irrelevant - Content not relevant to the target's country
+9. /personal_details - Sharing personal/private data
 10. /other - Miscellaneous rule violation
 
 Usage Example:
@@ -165,7 +157,6 @@ async def login(event):
         except:
             pass
 
-
 @client.on(events.NewMessage(pattern='/logout'))
 async def logout(event):
     sender = await event.get_sender()
@@ -185,18 +176,16 @@ async def logout(event):
     else:
         await event.respond("❌ You are not logged in.")
 
-
-
 async def mass_report(target, reason_key="other"):
     try:
         reason = REASONS_MESSAGES.get(reason_key, InputReportReasonOther())
         
         if isinstance(target, PeerChannel):
-            result = await client(Report(target, reason))
+            result = await client(ReportRequest(target, reason))
             report_logs['channel_reports'] += 1
             logging.info(f"Reported Channel: {target.id} | Success: {result}")
         elif isinstance(target, PeerUser):
-            result = await client(Report(target, reason))
+            result = await client(ReportRequest(target, reason))
             report_logs['user_reports'] += 1
             logging.info(f"Reported User: {target.id} | Success: {result}")
     except FloodWaitError as e:
@@ -284,24 +273,21 @@ async def mass_report_all_reasons_command(event):
             target = event.message.text.split(' ')[1]
             target = await client.get_entity(target)
             await mass_report_all_reasons(target)
+            await event.respond(f"Mass reporting for {target.id} initiated.")
         except:
             await event.respond("Please provide a valid target.")
     else:
         await event.respond("You are not authorized to use this command.")
 
-@client.on(events.NewMessage(pattern='/help'))
-async def help_command(event):
-    await event.respond(HELP_MESSAGE)
-
-@client.on(events.NewMessage(pattern='/get_logs'))
-async def get_logs_command(event):
+@client.on(events.NewMessage(pattern='/report_logs'))
+async def report_logs_command(event):
     user_id = event.sender_id
-    await get_report_logs(user_id)
-    
-async def main():
-    await restore_sessions()
-    await client.run_until_disconnected()
+    if is_sudo_user(user_id):
+        await get_report_logs(user_id)
+    else:
+        await event.respond("You are not authorized to view the report logs.")
 
-if __name__ == "__main__":
-    asyncio.run(main())
+if __name__ == '__main__':
+    asyncio.run(restore_sessions())
+    client.run_until_disconnected()
     
