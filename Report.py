@@ -290,8 +290,14 @@ async def report_logs_command(event):
 async def help_command(event):
     await event.respond(HELP_MESSAGE)
 
-# Initialize sessions on bot startup
-loop = asyncio.get_event_loop()
-loop.run_until_complete(restore_sessions())
+async def main():
+    await restore_sessions()
+    await client.start()
+    await client.run_until_disconnected()
+    await asyncio.get_event_loop().create_future()
 
-client.run_until_disconnected()
+if __name__ == "__main__":
+    try:
+        asyncio.get_event_loop().run_until_complete(main())
+    except KeyboardInterrupt:
+        print("🛑 Bot stopped manually.")
