@@ -71,7 +71,9 @@ REASONS_MESSAGES = {
     "violence": InputReportReasonViolence(),
     "fake": InputReportReasonFake(),
     "copyright": InputReportReasonCopyright(),
-    "drugs": InputReportReasonDrugs(),
+    "drugs": InputReportReasonIllegalDrugs(),
+    "geo_irrelevant": InputReportReasonGeoIrrelevant(),
+    "personal_details": InputReportReasonPersonalDetails(),
     "other": InputReportReasonOther(),
 }
 
@@ -84,7 +86,9 @@ Available Report Reasons:
 5. /fake - Pretending to be someone else
 6. /copyright - Posting copyrighted material
 7. /drugs - Promoting drugs
-8. /other - Miscellaneous rule violation
+8. /geo_irrelevant - Irrelevant to the target country
+9. /personal_details - Sharing private or personal data
+10. /other - Miscellaneous rule violation
 
 Usage Example:
 To report a user/channel: /report_all @username spamming
