@@ -249,7 +249,7 @@ async def remove_sudo(event):
     else:
         await event.respond("You are not authorized to remove sudo users.")
 
-@client.on(events.NewMessage(pattern='/report_all'))
+@client.on(events.NewMessage(pattern='/report'))
 async def report_all(event):
     user_id = event.sender_id
     if is_sudo_user(user_id):
@@ -270,7 +270,7 @@ async def test_command(event):
     logging.info(f"Test command received from user {user_id}")
     await event.respond(f"Test command received! Your user ID is {user_id}.")
 
-@client.on(events.NewMessage(pattern='/mass_report_all_reasons'))
+@client.on(events.NewMessage(pattern='/mass_report'))
 async def mass_report_all_reasons_command(event):
     user_id = event.sender_id
     if is_sudo_user(user_id):
