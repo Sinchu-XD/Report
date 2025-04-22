@@ -292,7 +292,6 @@ async def help_command(event):
 
 async def main():
     await restore_sessions()
-    await client.start()
     await client.run_until_disconnected()
     await asyncio.get_event_loop().create_future()
 
