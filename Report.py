@@ -12,11 +12,11 @@ import time
 
 logging.basicConfig(level=logging.INFO)
 
-API_ID = 'your_api_id'
-API_HASH = 'your_api_hash'
-BOT_TOKEN = "YOUR_BOT_TOKEN"
+API_ID = 6067591
+API_HASH = "94e17044c2393f43fda31d3afe77b26b"
+BOT_TOKEN = "7875353720:AAG_Hg3W6P5vvR7WP1PzELqS-9exTLLQ3MU"
 
-OWNER_ID = 123456789
+OWNER_ID = 7862043458
 SUDO_USERS = [OWNER_ID]
 
 LOGIN_STORAGE_FILE = 'login_storage.json'
