@@ -1,5 +1,5 @@
 from telethon.sync import TelegramClient
-from telethon import types
+from telethon.types import InputReportReasonSpam
 from telethon.tl.functions.messages import ReportRequest
 
 api_id = 123456  # replace with your API ID
