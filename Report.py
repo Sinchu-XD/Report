@@ -1,3 +1,5 @@
+import os
+import json
 from telethon import TelegramClient, events
 from telethon.tl.functions.messages import Report
 from telethon.tl.types import PeerChannel, PeerUser, InputReportReasonSpam, InputReportReasonPornography, InputReportReasonChildAbuse, InputReportReasonViolence, InputReportReasonFake, InputReportReasonCopyright, InputReportReasonDrugs, InputReportReasonOther
@@ -79,11 +81,9 @@ def is_sudo_user(user_id):
     return user_id == OWNER_ID or user_id in SUDO_USERS
 
 async def add_sudo_user(user_id):
-    if is_sudo_user(user_id):
+    if user_id not in SUDO_USERS:
         SUDO_USERS.append(user_id)
-        await client.send_message(user_id, "You have been added as a Sudo user.")
-    else:
-        await client.send_message(user_id, "You do not have permission to add Sudo users.")
+        await client.send_message(user_id, "✅ You have been added as a Sudo user.")
 
 async def remove_sudo_user(user_id):
     if is_sudo_user(user_id) and user_id != OWNER_ID:
