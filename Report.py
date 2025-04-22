@@ -229,8 +229,7 @@ async def add_sudo(event):
             await add_sudo_user(target_id)
         except:
             if len(event.message.text.split()) < 2:
-    
-            await event.respond("Please provide a valid user ID.")
+                await event.respond("Please provide a valid user ID.")
     else:
         await event.respond("You are not authorized to add sudo users.")
 
@@ -261,39 +260,28 @@ async def report_all(event):
     else:
         await event.respond("You are not authorized to use this command.")
 
-@client.on(events.NewMessage(pattern='/mass_report_all'))
-async def mass_report_all(event):
+@client.on(events.NewMessage(pattern='/mass_report_all_reasons'))
+async def mass_report_all_reasons_command(event):
     user_id = event.sender_id
     if is_sudo_user(user_id):
         try:
             target = event.message.text.split(' ')[1]
             target = await client.get_entity(target)
             await mass_report_all_reasons(target)
-            await event.respond(f"Mass report for {target.id} with all available reasons has been initiated.")
         except:
             await event.respond("Please provide a valid target.")
     else:
         await event.respond("You are not authorized to use this command.")
 
-@client.on(events.NewMessage(pattern='/get_logs'))
-async def get_logs(event):
-    user_id = event.sender_id
-    if is_sudo_user(user_id):
-        await get_report_logs(user_id)
-    else:
-        await event.respond("You are not authorized to view logs.")
-
 @client.on(events.NewMessage(pattern='/help'))
-async def help(event):
-    user_id = event.sender_id
-    if is_sudo_user(user_id):
-        await event.respond(HELP_MESSAGE)
-    else:
-        await event.respond("You do not have permission to view help.")
+async def help_command(event):
+    await event.respond(HELP_MESSAGE)
+
 
 async def main():
     await restore_sessions()
+    await client.run_until_disconnected()
 
-with client:
-    client.loop.run_until_complete(main())
-    client.run_until_disconnected()
+if __name__ == "__main__":
+    asyncio.run(main())
+    
