@@ -296,14 +296,11 @@ async def report_logs_command(event):
 async def help_command(event):
     await event.respond(HELP_MESSAGE)
 
-async def main():
-    await restore_sessions()
-    logging.info("Bot has started and is running...")
-    await client.run_until_disconnected()
-    await asyncio.get_event_loop().create_future()
+loop = asyncio.get_event_loop()
+loop.run_until_complete(restore_sessions())
+
+print("[INFO]: SUCCESSFULLY STARTED BOT!")
+print("[INFO]: Nice Bot")
 
 if __name__ == "__main__":
-    try:
-        asyncio.get_event_loop().run_until_complete(main())
-    except KeyboardInterrupt:
-        print("🛑 Bot stopped manually.")
+    client.run_until_disconnected()
