@@ -1,12 +1,11 @@
-from telethon.sync import TelegramClient
-from telethon.tl.functions.messages import ReportRequest
-from telethon.tl.types import (InputReportReasonSpam,
-    InputReportReasonViolence,
-    InputReportReasonPornography,
-    InputReportReasonChildAbuse,
-    InputReportReasonCopyright,
-    InputReportReasonFake,
-    InputReportReasonIllegalDrugs,
-    InputReportReasonPersonalDetails,
-    InputReportReasonGeoIrrelevant,
-    InputReportReasonOther)
+from telethon import TelegramClient, events
+from Report import API_ID as api_id, API_HASH as api_hash, BOT_TOKEN
+
+bot = TelegramClient('bot', api_id, api_hash).start(bot_token=BOT_TOKEN)
+
+@bot.on(events.NewMessage(pattern="/start"))
+async def start(event):
+    await event.respond("Hello! Bot is working.")
+
+print("Bot is running...")
+bot.run_until_disconnected()
